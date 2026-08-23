@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMART VIDHYA USS MODEL EXAM - PAPER I</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts for Malayalam, Arabic, Urdu, Sanskrit, and English -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anek+Malayalam:wght@400;500;600;700;800&family=Amiri:wght@400;700&family=Noto+Nastaliq+Urdu:wght@400;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- html2pdf Library for WebView & mobile app PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  
+  <style>
+    :root {
+      --omr-blue: #0b3c68;
+      --omr-border: #1e293b;
+      --bg-color: #f1f5f9;
+    }
+    body {
+      background-color: var(--bg-color);
+      font-family: 'Anek Malayalam', 'Inter', sans-serif;
+      color: #0f172a;
+    }
+    .font-malayalam { font-family: 'Anek Malayalam', sans-serif; }
+    .font-english { font-family: 'Inter', sans-serif; }
+    .font-arabic { font-family: 'Amiri', serif; }
+    .font-urdu { font-family: 'Noto Nastaliq Urdu', serif; }
+    .font-sanskrit { font-family: 'Noto Sans Devanagari', sans-serif; }
+
+    /* Compact Question Card for PDF Optimization */
+    .q-card {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
+
+    .btn-step {
+      transition: all 0.2s ease-in-out;
+      border: 2px solid var(--omr-blue);
+    }
+    .btn-step.active {
+      background-color: var(--omr-blue);
+      color: #ffffff;
+      box-shadow: 0 4px 6px -1px rgba(11, 60, 104, 0.3);
+    }
+    .roll-bubble {
+      width: 22px;
+      height: 22px;
+      border: 1px solid #000;
+      border-radius: 50%;
+      font-size: 10px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+    }
+    .roll-bubble.filled {
+      background: #000;
+      color: #fff;
+    }
+    #sigCanvas {
+      border: 1px dashed #475569;
+      background: #f8fafc;
+      cursor: crosshair;
+      touch-action: none;
+    }
+    .q-bubble-item input[type="radio"] {
+      accent-color: #000;
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    @media print {
+      body {
+        background-color: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        color: #000000 !important;
+        font-size: 11pt;
+      }
+      .no-print, nav, .btn-step, button {
+        display: none !important;
+      }
+      .max-w-5xl {
+        max-width: 100% !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      .tab-pane {
+        display: block !important;
+      }
+      .tab-pane.hidden {
+        display: none !important;
+      }
+      .border, .border-2 {
+        border-color: #000000 !important;
+      }
+      .bg-slate-50, .bg-emerald-50\/40, .bg-emerald-50 {
+        background-color: #ffffff !important;
+      }
+      .shadow-md, .shadow-sm, .shadow-lg {
+        box-shadow: none !important;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+    }
+  </style>
+</head>
+<body class="p-3 md:p-6 min-h-screen">
+
+  <div class="max-w-5xl mx-auto bg-white rounded-xl shadow-lg border border-slate-200 p-4 md:p-8">
+    
+    <!-- Exam Header -->
+    <div class="text-center border-b-2 border-[#0b3c68] pb-4 mb-6">
+      <h1 class="text-2xl md:text-3xl font-extrabold text-[#0b3c68] tracking-wide font-malayalam">
+        SMART VIDHYA USS MODEL EXAM
+      </h1>
+      <p class="text-sm md:text-base font-bold text-slate-600 mt-1 font-malayalam">
+        പേപ്പർ 1 - ഓൺലൈൻ ചോദ്യശേഖരവും ലൈവ് OMR എക്സാമിനേഷനും (PAPER I)
+      </p>
+    </div>
+
+    <!-- Main Navigation Tabs -->
+    <div class="flex flex-wrap gap-2 border-b border-slate-300 mb-6 no-print">
+      <button id="tabBtnDownload" onclick="switchMainTab('downloadTab')" class="py-2.5 px-5 font-bold text-sm md:text-base rounded-t-lg border-b-2 transition-all hover:bg-slate-100 font-malayalam text-[#0b3c68] border-[#0b3c68] bg-slate-100">
+        ക്വസ്റ്റ്യൻ പേപ്പർ (Questions & Options)
+      </button>
+      <button id="tabBtnLive" onclick="switchMainTab('liveExamTab')" class="py-2.5 px-5 font-bold text-sm md:text-base rounded-t-lg border-b-2 border-transparent transition-all hover:bg-slate-100 text-slate-600 font-malayalam flex items-center gap-1.5">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>
+        ലൈവ് എക്സാം (Live OMR Exam)
+      </button>
+      <button id="tabBtnResult" onclick="switchMainTab('resultTab')" class="py-2.5 px-5 font-bold text-sm md:text-base rounded-t-lg border-b-2 border-transparent transition-all hover:bg-slate-100 text-slate-600 font-malayalam">
+        ഗെറ്റ് റിസൾട്ട് (Get Result)
+      </button>
+    </div>
+
+    <!-- TAB 1: Download & Question View -->
+    <div id="downloadTab" class="tab-pane">
+      <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-4 no-print">
+        <h3 class="font-bold text-[#0b3c68] text-base mb-2 font-malayalam">1. എക്സാം തിരഞ്ഞെടുക്കുക:</h3>
+        <div class="flex flex-wrap gap-2">
+          <button class="btn-step active py-1.5 px-4 rounded text-sm font-bold font-malayalam">USS മോഡൽ എക്സാം 1</button>
+        </div>
+      </div>
+
+      <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-4 no-print">
+        <h3 class="font-bold text-[#0b3c68] text-base mb-2 font-malayalam">2. പേപ്പർ തിരഞ്ഞെടുക്കുക:</h3>
+        <div class="flex flex-wrap gap-2">
+          <button class="btn-step active py-1.5 px-4 rounded text-sm font-bold font-malayalam">പേപ്പർ 1 (Paper I)</button>
+        </div>
+      </div>
+
+      <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-4 no-print">
+        <h3 class="font-bold text-[#0b3c68] text-base mb-2 font-malayalam">3. മീഡിയം തിരഞ്ഞെടുക്കുക:</h3>
+        <div class="flex flex-wrap gap-2">
+          <button id="medBtnMal" onclick="selectExamMedium('Malayalam')" class="btn-step py-1.5 px-4 rounded text-sm font-bold text-[#0b3c68] bg-white hover:bg-slate-100 font-malayalam">മലയാളം മീഡിയം</button>
+          <button id="medBtnEng" onclick="selectExamMedium('English')" class="btn-step py-1.5 px-4 rounded text-sm font-bold text-[#0b3c68] bg-white hover:bg-slate-100 font-malayalam">ഇംഗ്ലീഷ് മീഡിയം</button>
+        </div>
+      </div>
+
+      <div id="langSelectionStep" class="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-4 no-print hidden">
+        <h3 class="font-bold text-[#0b3c68] text-base mb-2 font-malayalam">4. ഫസ്റ്റ് ലാംഗ്വേജ് (1st Language - AT) തിരഞ്ഞെടുക്കുക:</h3>
+        <div class="flex flex-wrap gap-2">
+          <button id="langBtnMal" onclick="selectFirstLanguage('Malayalam')" class="btn-step py-1.5 px-4 rounded text-sm font-bold text-[#0b3c68] bg-white hover:bg-slate-100 font-malayalam">മലയാളം (AT)</button>
+          <button id="langBtnArab" onclick="selectFirstLanguage('Arabic')" class="btn-step py-1.5 px-4 rounded text-sm font-bold text-[#0b3c68] bg-white hover:bg-slate-100 font-malayalam">അറബിക് (Arabic)</button>
+          <button id="langBtnUrdu" onclick="selectFirstLanguage('Urdu')" class="btn-step py-1.5 px-4 rounded text-sm font-bold text-[#0b3c68] bg-white hover:bg-slate-100 font-malayalam">ഉറുദു (Urdu)</button>
+          <button id="langBtnSans" onclick="selectFirstLanguage('Sanskrit')" class="btn-step py-1.5 px-4 rounded text-sm font-bold text-[#0b3c68] bg-white hover:bg-slate-100 font-malayalam">സംസ്കൃതം (Sanskrit)</button>
+        </div>
+      </div>
+
+      <div id="questionsContainer" class="mt-6"></div>
+    </div>
+
+    <!-- TAB 2: Live OMR Exam -->
+    <div id="liveExamTab" class="tab-pane hidden">
+      <div class="flex justify-between items-center mb-4 no-print bg-slate-100 p-3 rounded-lg border border-slate-200">
+        <span class="font-bold text-slate-700 text-sm font-malayalam">📄 OMR പരീക്ഷ ഓഫ്‌ലൈനായി പ്രിന്റ് / PDF ആക്കാൻ:</span>
+        <button type="button" onclick="exportToPDF('omrMainForm', 'SMART_VIDHYA_Paper1_Blank_OMR.pdf')" class="bg-[#0b3c68] hover:bg-slate-800 text-white font-bold px-4 py-2 rounded text-xs md:text-sm font-malayalam flex items-center gap-1.5 transition-all shadow-md">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H7a2 2 0 00-2 2v4h10z"></path></svg>
+          🖨️ ഡൗൺലോഡ് OMR PDF (Save OMR PDF)
+        </button>
+      </div>
+
+      <form id="omrMainForm" onsubmit="handleOmrSubmission(event)">
+        <div class="border-2 border-slate-900 p-4 md:p-6 bg-white rounded-lg shadow-sm">
+          <div class="text-center font-extrabold text-lg text-slate-900 border-b-2 border-slate-900 pb-3 mb-6 font-malayalam">
+            SMART VIDHYA USS MODEL EXAM - OMR ANSWER SHEET (PAPER I)
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div class="space-y-4">
+              <div class="border border-slate-800 p-3 rounded">
+                <label class="block text-xs font-bold text-slate-800 mb-1 font-malayalam">Name of the Candidate (കുട്ടിയുടെ പേര്):</label>
+                <input type="text" id="studentName" class="w-full border border-slate-400 p-2 text-sm font-bold rounded uppercase font-mono" placeholder="NAME IN CAPITAL LETTERS" oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '').toUpperCase()" required>
+              </div>
+
+              <div class="border border-slate-800 p-3 rounded">
+                <label class="block text-xs font-bold text-slate-800 mb-1 font-malayalam">Roll Number (ഫോൺ നമ്പറിന്റെ അവസാന 6 അക്കങ്ങൾ):</label>
+                <input type="text" id="studentRoll" maxlength="6" pattern="[0-9]{6}" class="w-full border border-slate-400 p-2 text-sm font-bold rounded tracking-widest font-mono" placeholder="6 Digit Roll Code" oninput="updateRollOmrBubbles(this.value)" required>
+                <p class="text-[11px] text-slate-500 mt-1 font-malayalam">* ബോക്സിൽ നമ്പർ നൽകുമ്പോൾ താഴെയുള്ള OMR ഓട്ടോമാറ്റിക്കായി ബബിൾ ആവുന്നതാണ്.</p>
+                <div id="rollBubbleMatrix" class="flex justify-around mt-3"></div>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <div class="border border-slate-800 p-3 rounded">
+                <label class="block text-xs font-bold text-slate-800 mb-1 font-malayalam">1st Language (AT) & Medium & Gender:</label>
+                <div class="space-y-2 text-xs font-semibold font-malayalam">
+                  <div>
+                    <span class="text-slate-600 block mb-1">1st Language (AT):</span>
+                    <div class="grid grid-cols-2 gap-1 text-[11px]">
+                      <label class="inline-flex items-center gap-1 cursor-pointer"><input type="radio" name="omr_lang_at" value="Malayalam" required> Malayalam</label>
+                      <label class="inline-flex items-center gap-1 cursor-pointer"><input type="radio" name="omr_lang_at" value="Arabic"> Arabic</label>
+                      <label class="inline-flex items-center gap-1 cursor-pointer"><input type="radio" name="omr_lang_at" value="Urdu"> Urdu</label>
+                      <label class="inline-flex items-center gap-1 cursor-pointer"><input type="radio" name="omr_lang_at" value="Sanskrit"> Sanskrit</label>
+                    </div>
+                  </div>
+                  <div class="flex gap-6 pt-1 border-t border-slate-200">
+                    <div>
+                      <span class="text-slate-600 block mb-1">Medium:</span>
+                      <label class="mr-2 inline-flex items-center gap-1 cursor-pointer"><input type="radio" name="omr_med" value="Malayalam" required> Mal</label>
+                      <label class="inline-flex items-center gap-1 cursor-pointer"><input type="radio" name="omr_med" value="English"> Eng</label>
+                    </div>
+                    <div>
+                      <span class="text-slate-600 block mb-1">Gender:</span>
+                      <label class="mr-2 inline-flex items-center gap-1 cursor-pointer"><input type="radio" name="omr_gender" value="Male" required> Male</label>
+                      <label class="inline-flex items-center gap-1 cursor-pointer"><input type="radio" name="omr_gender" value="Female"> Female</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="border border-slate-800 p-3 rounded bg-slate-100 opacity-80">
+                <label class="block text-xs font-bold text-slate-700 mb-1 font-malayalam">Question Booklet No & Set:</label>
+                <input type="text" class="w-full border border-slate-300 p-1.5 text-xs font-bold rounded bg-slate-200 text-slate-500 cursor-not-allowed" value="DISABLED" disabled>
+                <span class="text-red-600 font-bold text-[11px] block mt-1 font-malayalam">ഇത് സെലക്ട് ചെയ്യേണ്ടതില്ല</span>
+              </div>
+
+              <div class="border border-slate-800 p-3 rounded">
+                <label class="block text-xs font-bold text-slate-800 mb-1 font-malayalam">Signature of Candidate:</label>
+                <canvas id="sigCanvas" class="w-full h-16 rounded"></canvas>
+                <div class="flex justify-between items-center mt-1">
+                  <button type="button" onclick="clearSignatureCanvas()" class="text-[11px] font-bold text-slate-600 underline font-malayalam">Clear Signature</button>
+                  <span class="text-red-600 font-bold text-[11px] font-malayalam">Candidate signature ചെയ്യേണ്ടതില്ല</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- OMR Grid (50 Questions) -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="border border-slate-900 p-2 rounded">
+              <div class="bg-[#0b3c68] text-white text-center font-bold text-xs p-1.5 rounded mb-3 font-malayalam">
+                PART-A (1st Language - AT)<br>ചോദ്യങ്ങൾ 1 മുതൽ 15 വരെ
+              </div>
+              <div id="omrPartAGrid" class="space-y-1.5"></div>
+            </div>
+
+            <div class="border border-slate-900 p-2 rounded">
+              <div class="bg-[#0b3c68] text-white text-center font-bold text-xs p-1.5 rounded mb-3 font-malayalam">
+                PART-B (Malayalam - BT)<br>ചോദ്യങ്ങൾ 16 മുതൽ 30 വരെ
+              </div>
+              <div id="omrPartBGrid" class="space-y-1.5"></div>
+            </div>
+
+            <div class="border border-slate-900 p-2 rounded">
+              <div class="bg-[#0b3c68] text-white text-center font-bold text-xs p-1.5 rounded mb-3 font-malayalam">
+                PART-C (Mathematics - ഗണിതം)<br>ചോദ്യങ്ങൾ 31 മുതൽ 50 വരെ
+              </div>
+              <div id="omrPartCGrid" class="space-y-1.5"></div>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full mt-6 bg-[#0b3c68] hover:bg-slate-800 text-white font-bold py-3 rounded text-base shadow-md transition-all font-malayalam">
+            SUBMIT EXAM (പരീക്ഷ സബ്മിറ്റ് ചെയ്യുക)
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- TAB 3: Result View -->
+    <div id="resultTab" class="tab-pane hidden">
+      <div class="max-w-md mx-auto bg-slate-50 border border-slate-200 rounded-lg p-6 shadow-sm">
+        <h3 class="font-bold text-[#0b3c68] text-base mb-3 font-malayalam">എക്സാം റിസൾട്ട് അറിയാൻ റോൾ നമ്പർ നൽകുക:</h3>
+        <input type="text" id="lookupRollInput" maxlength="6" class="w-full border border-slate-400 p-2.5 rounded font-mono font-bold tracking-widest mb-4" placeholder="Enter 6-digit Roll No">
+        <button onclick="fetchCandidateResult()" class="w-full bg-[#0b3c68] hover:bg-slate-800 text-white font-bold py-2.5 rounded transition-all font-malayalam">
+          GET RESULT
+        </button>
+      </div>
+      <div id="resultOutputDisplay" class="mt-6"></div>
+    </div>
+  </div>
+
+  <!-- Custom Notice Modal (Replaces browser alert) -->
+  <div id="customNoticeModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print">
+    <div class="bg-white rounded-xl shadow-2xl max-w-sm w-full p-6 text-center border-2 border-[#0b3c68]">
+      <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3 text-[#0b3c68]">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+      </div>
+      <h3 id="modalTitle" class="text-lg font-bold text-[#0b3c68] font-malayalam mb-2">അറിയിപ്പ്</h3>
+      <p id="modalMessage" class="text-sm text-slate-600 font-malayalam mb-6 leading-relaxed"></p>
+      <button id="modalOkBtn" type="button" class="w-full bg-[#0b3c68] hover:bg-slate-800 text-white font-bold py-2.5 rounded-lg font-malayalam transition-all shadow-md">
+        ശരി (OK)
+      </button>
+    </div>
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+    var selectedActiveMedium = '';
+    var selectedActiveLang = '';
+
+    // Custom Modal Display (Replaces alert)
+    function showNoticeModal(title, message, callback) {
+      var modal = document.getElementById('customNoticeModal');
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalMessage').innerText = message;
+      modal.classList.remove('hidden');
+
+      var okBtn = document.getElementById('modalOkBtn');
+      okBtn.onclick = function() {
+        modal.classList.add('hidden');
+        if (typeof callback === 'function') callback();
+      };
+    }
+
+    // Official Evaluation Keys for Paper 1 (As per KSTU PAPER ANSWER KEY.JPG)
+    var MASTER_EVALUATION_KEY_PAPER1 = {
+      "Malayalam": { 1:'B', 2:'D', 3:'C', 4:'C', 5:'D', 6:'C', 7:'A', 8:'D', 9:'C', 10:'B', 11:'A', 12:'A', 13:'D', 14:'D', 15:'A' },
+      "Sanskrit": { 1:'C', 2:'A', 3:'D', 4:'C', 5:'A', 6:'C', 7:'B', 8:'A', 9:'D', 10:'B', 11:'A', 12:'B', 13:'D', 14:'D', 15:'C' },
+      "Arabic": { 1:'B', 2:'D', 3:'C', 4:'C', 5:'D', 6:'A', 7:'C', 8:'B', 9:'B', 10:'C', 11:'C', 12:'C', 13:'B', 14:'D', 15:'B' },
+      "Urdu": { 1:'D', 2:'C', 3:'A', 4:'A', 5:'C', 6:'B', 7:'A', 8:'B', 9:'A', 10:'B', 11:'A', 12:'C', 13:'B', 14:'D', 15:'B' },
+      "Malayalam_BT": { 16:'C', 17:'D', 18:'C', 19:'D', 20:'A', 21:'A', 22:'D', 23:'A', 24:'C', 25:'A', 26:'B', 27:'A', 28:'A', 29:'C', 30:'D' },
+      "Maths": { 31:'B', 32:'A', 33:'C', 34:'D', 35:'C', 36:'D', 37:'A', 38:'B', 39:'D', 40:'C', 41:'D', 42:'A', 43:'B', 44:'B', 45:'C', 46:'D', 47:'C', 48:'D', 49:'C', 50:'C' }
+    };
+
+    // Complete Question Bank for Paper 1
+    var EXAM_QUESTION_BANK_PAPER1 = {
+      "Malayalam_PartA": [
+        { q: "1. വായുവിലാകെ അനിർവചനീയമായ പരിമളം നിറഞ്ഞുലാവുന്നു. পরিമളം എന്ന പദത്തിന്റെ ശരിയായ അർത്ഥങ്ങൾ കണ്ടെത്തുക?<br>(i) സുന്ദരം (ii) സുഗന്ധം (iii) സുലഭം (iv) വാസന", a: "(i) ഉം (iii) ഉം ശരി", b: "(ii) ഉം (iv) ഉം ശരി", c: "(i) ഉം (iv) ഉം ശരി", d: "(ii) ഉം (iii) ഉം ശരി" },
+        { q: "2. താഴെ നൽകിയ പദാവലിയിൽ നിഘണ്ടു ക്രമത്തിൽ എഴുതിയതേത്?", a: "വണ്ട്, തേനീച്ച, തുമ്പി, ചിത്രശലഭം, കിളി", b: "കിളി, തുമ്പി, തേനീച്ച, വണ്ട്, ചിത്രശലഭം", c: "ചിത്രശലഭം, തേനീച്ച, തുമ്പി, കിളി, വണ്ട്", d: "കിളി, ചിത്രശലഭം, തുമ്പി, തേനീച്ച, വണ്ട്" },
+        { q: "3. തന്നിരിക്കുന്ന സൂചനകളിൽ നിന്നും കവിയെ കണ്ടെത്തുക:<br>i കേരള വാൽമീകി എന്നറിയപ്പെടുന്നു<br>ii ബധിരവിലാപം എന്ന കവിത രചിച്ചു<br>iii ചിത്രയോഗം എന്ന മഹാകാവ്യം എഴുതി<br>iv കേരള കലാമണ്ഡലം സ്ഥാപിച്ചു", a: "കുമാരനാശാൻ", b: "ഉള്ളൂർ എസ് പരമേശ്വരയ്യർ", c: "വള്ളത്തോൾ നാരായണമേനോൻ", d: "ഒ.എൻ.വി കുറുപ്പ്" },
+        { q: "4. കറുത്ത തുണിയിൽ വെള്ള പൊട്ട് പോലെ ഒരായിരം മിന്നാമിനുങ്ങുകൾ? അടിവരയിട്ട പദത്തിലെ വിഭക്തി ഏതെന്ന് കണ്ടെത്തുക", a: "ആധാരിക", b: "സംബന്ധിക", c: "പ്രതിഗ്രാഹിക", d: "ഉദ്ദേശിക" },
+        { q: "5. ഒറ്റയാനെ കണ്ടെത്തുക:", a: "അകലങ്ങളിലെ മനുഷ്യർ", b: "ദിഗാരുവിലെ ആനകൾ", c: "സ്വിസ് സ്കെച്ചുകൾ", d: "ബാലിദ്വീപ്" },
+        { q: "6. 2025 ൽ എഴുത്തച്ഛൻ പുരസ്കാരം ലഭിച്ചതാർക്ക്?", a: "എൻ എസ് മാധവൻ", b: "സേതു", c: "കെ ജി ശങ്കരപിള്ള", d: "എസ് കെ വസന്തൻ" },
+        { q: "7. തെറ്റായ ജോഡി കണ്ടെത്തുക:", a: "ചങ്ങമ്പുഴ - എന്റെ ഗുരുനാഥൻ", b: "ചെറുശ്ശേരി - കൃഷ്ണഗാഥ", c: "വള്ളത്തോൾ - ശിഷ്യനും മകനും", d: "എസ് ജോസഫ് - ചിത്രശലഭങ്ങൾ" },
+        { q: "8. ഇടതടവില്ലാതെ എന്ന ശൈലികൊണ്ട് അർത്ഥമാക്കുന്നതെന്ത്?", a: "ഇടയിൽ തടസ്സങ്ങൾ മാത്രം", b: "ഇടയും തടസുമില്ലാതെ", c: "ഇടയിൽ തടയണം", d: "തടസ്സങ്ങൾ ഇല്ലാതെ" },
+        { q: "9. തന്നിരിക്കുന്നവയിൽ നിന്ന് കലാരൂപം ഏതെന്ന് കണ്ടെത്തുക:<br>i ഒരു നാടോടി കലാരൂപം<br>ii കാക്കലനും കാക്കാത്തിയും കഥാപാത്രങ്ങൾ<br>iii ആക്ഷേപഹാസ്യം, ഫലിതം<br>iv സാമൂഹ്യപ്രശ്നം പ്രതിഫലിക്കുന്നു", a: "ചവിട്ടുനാടകം", b: "തെയ്യം", c: "കാക്കരിശ്ശി നാടകം", d: "മുടിയേറ്റ്" },
+        { q: "10. പെയ്തു തീരാത്ത സ്വപ്നം പോലെ എന്ന പാഠഭാഗത്തെ അലിയുടെ ജീവിതവുമായി ബന്ധമില്ലാത്തത് ഏത്?", a: "അലിയുടെ സഹോദരിയാണ് സാറ", b: "അലി ധനികനാണ്", c: "അലിയുടെ കയ്യിൽ നിന്നും സാറയുടെ ഷൂസ് നഷ്ടപ്പെട്ടു", d: "അലി അച്ഛനെ സ്നേഹിക്കുന്നു" },
+        { q: "11. 'നോക്ക്, നോക്ക്, എടാ നീ നേടി. നോക്ക്!' ക്രിസ്റ്റി ബ്രൗണിന്റെ അച്ഛന്റെ വാക്കുകളിലെ ഭാവം എന്ത്?", a: "സന്തോഷം", b: "സങ്കടം", c: "നിരാശ", d: "പരിഹാസം" },
+        { q: "12. ചിത്രശലഭങ്ങൾ എന്ന കവിത എഴുതിയതാര്?", a: "എസ് ജോസഫ്", b: "കുരീപ്പുഴ ശ്രീകുമാർ", c: "റഫീഖ് അഹമ്മദ്", d: "ചങ്ങമ്പുഴ കൃഷ്ണപിള്ള" },
+        { q: "13. പദങ്ങൾ കൂട്ടിച്ചേർത്തപ്പോൾ വ്യത്യസ്തത പുലർത്തുന്നത് ഏത്?", a: "ചാടി + ചാടി = ചാടിച്ചാടി", b: "പാറി + പറന്ന് = പാറിപ്പറന്ന്", c: "ഓടി + കയറി = ഓടിക്കയറി", d: "വില + ഇല്ലാതെ = വിലയില്ലാതെ" },
+        { q: "14. സ്വർണ്ണക്കീറ് - വിഗ്രഹിച്ചാൽ:", a: "സ്വർണ്ണമായ കീറ്", b: "സ്വർണമാകുന്ന കീറ്", c: "സ്വർണത്തിന്റെ കീറ്", d: "സ്വർണ്ണ നിറമുള്ള കീറ്" },
+        { q: "15. 'മുട്ടയിട്ടത് കടലിൽ, വിരിഞ്ഞത് കടലിൽ, നീന്തുന്നത് കടലിൽ. എന്നിട്ടും നീ ചോദിക്ക്യാ എന്താണ് കടൽ എന്ന്? കഷ്ടം' ഇത് പറഞ്ഞതാര്?", a: "അമ്മ മീൻ", b: "നെത്തോലി", c: "അയല", d: "തിരണ്ടി" }
+      ],
+
+      "Arabic_PartA": [
+        { q: "1. مَنْ أَهْدَى الْبَيْتَ؟", a: "أَهْلُ الْقَرْيَةِ", b: "الطَّلَّابُ", c: "النَّاسُ", d: "الْمُدَرِّسُونَ" },
+        { q: "2. مَنْ قَامَ بِتَسْلِيمِ الْبَيْتِ؟", a: "عُضُوُ الْمَجْلِسِ", b: "وَزِيرُ الْمَالِ", c: "الزُّمَلَاءُ", d: "وَزِيرُ التَّعْلِيمِ" },
+        { q: "3. كَيْفَ انْهَدَمَ بَيْتُهُ؟", a: "حَرِيقُ النَّارِ", b: "فِي الرِّيَاحِ", c: "فِي كَارِثَةٍ طَبِيعِيَّةٍ", d: "فِي الْمَطَرِ" },
+        { q: "4. اخْتَرْ غَيْرَ الْمُتَجَانِسِ مِنَ الْآتِيَةِ:", a: "نَجَّار - شَاكُوش", b: "طَبِيب - سَمَّاعَة", c: "مُهَنْدِس - المِنْشَار الكهربائي", d: "مَزَارِع - مِجْرَفَة" },
+        { q: "5. أَقْرَأُ ..... كُلَّ يَوْمٍ", a: "جَرِيدَةٍ", b: "الْجَرِيدَةِ", c: "الْجَرِيدَةُ", d: "الْجَرِيدَةَ" },
+        { q: "6. مِنْ مُؤَلَّفَاتِ سْتِيفَنْ هُوكِنْجْ:", a: "تَارِيخٌ مُوجَزٌ لِلزَّمَنْ", b: "سَيِّدَاتُ الْقَمَرِ", c: "الْقَانُونُ فِي الطِّبِّ", d: "اكْتِشَافُ الْهِنْدِ" },
+        { q: "7. عِنْدِي خَمْسَةُ .....", a: "كِتَابَاتٍ", b: "كِتَابًا", c: "كُتُبٍ", d: "كِتَابٌ" },
+        { q: "8. مَنْ هُوَ أَوَّلُ رَئِيسِ الْهِنْدِ؟", a: "آَمْبِيدْكَرْ", b: "جَوَهَرْ لَالْ نَهْرُو", c: "أَبُو الْكَلَامْ آَزَاد", d: "الدَّكْتُورُ رَاجِينْدْرَى بَرَسَادُ" },
+        { q: "9. قَرَأَ الطَّالِبُ الْكِتَابَ .....", a: "تَمْشِي", b: "مَاشِيًا", c: "مَشَى", d: "مَاشِيَةً" },
+        { q: "10. وَصَلَ أَبِي إِلَى الْبَيْتِ فِي السَّاعَةِ .....", a: "سَبْعِ", b: "سَبْعَة", c: "السَّابِعَةِ", d: "السَّابِع" },
+        { q: "11. 'سَيِّدَاتُ الْقَمَرِ' هِيَ مِنَ .....", a: "الْقِصَّة", b: "الْحِكَايَة", c: "الرِّوَايَة", d: "الْمَسْرَحِيَّة" },
+        { q: "12. عُمْلَةُ الْبَحْرَيْنِ .....", a: "دُولَار", b: "دِرْهَم", c: "دِينَار", d: "رِيَال" },
+        { q: "13. الْوَقَائِعُ الْمِصْرِيَّة هِيَ أَوَّلُ صَحِيفَةٍ عَرَبِيَّةٍ نُشِرَتْ مِنْ .....", a: "الْمَدِينَة", b: "الْقَاهِرَة", c: "السَّعُودِيَّة", d: "دِمَشْق" },
+        { q: "14. 'فِي' هِيَ .....", a: "أَدَاةُ الِاسْتِفْهَامِ", b: "أَدَاةُ الرَّفْعِ", c: "أَدَاةُ النَّصْبِ", d: "حُرُوفُ الْجَرِّ" },
+        { q: "15. مَنْ هُوَ أَمِيرُ الشُّعَرَاءِ؟", a: "حَافِظ إِبْرَاهِيم", b: "أَحْمَد شَوْقِي", c: "نَجِيب مَحْفُوظ", d: "مُحَمَّد الْفَاضِل سُلَيْمَان" }
+      ],
+
+      "Urdu_PartA": [
+        { q: "1. کہانی گرم گرم جلیبی کا کردار ہے؟", a: "جانو", b: "نہال", c: "جمعہ", d: "شاکرہ" },
+        { q: "2. کوڈو مباشری۔۔۔۔ کا انجمن ہے؟", a: "۳۸", b: "۳۵", c: "الدد", d: "عورتوں" },
+        { q: "3. آزاد ہندوستان کے پہلے وزیراعظم کون تھے؟", a: "نہرہ", b: "ابوالکلام آزاد", c: "بھگت سنگھ", d: "اقبال" },
+        { q: "4. ہم ۔۔۔۔۔۔ سے سنتے ہیں۔", a: "کان", b: "ناک", c: "زبان", d: "ہاتھ" },
+        { q: "5. کونسا جملہ صحیح نہیں ہے؟", a: "ہندوستان کا قومی پرندہ مور ہے", b: "کیرلا کا ریاستی جانور ہاتھی ہے", c: "کیرلا کا ریاستی پیڑ پیپل ہے", d: "ہندوستان کا قومی پھل آم ہے" },
+        { q: "6. ایک قلم کے دام ۸ روپیہ ہے تو پانچ قلم کے دام کتنے ہوں گے؟", a: "پچاس", b: "چالیس", c: "چوالیس", d: "چھیالیس" },
+        { q: "7. نظم سارے جہاں سے اچھا کس نے لکھا؟", a: "اقبال", b: "غالب", c: "سرور", d: "میر" },
+        { q: "8. جوڑ ملائیں۔ (1. سبھاش چندر بوس, 2. تاج محل, 3. کنول, 4. منار)", a: "1-d, 2-c, 3-b, 4-a", b: "1-d, 2-a, 3-b, 4-c", c: "1-d, 2-a, 3-c, 4-b", d: "1-b, 2-a, 3-d, 4-c" },
+        { q: "9. سنیچر کے بعد یہ دن آتا ہے۔", a: "اتوار", b: "منگل", c: "بدھ", d: "جمعرات" },
+        { q: "10. ریاست کیرلا میں۔۔۔۔۔۔اضلاع ہیں۔", a: "۱۴", b: "۱۲", c: "۱۵", d: "۱۶" },
+        { q: "11. تم مجھے خون دو، میں تمھیں آزادی دوں گا۔ یہ کس کا نعرہ ہے؟", a: "سبھاش چندر بوس", b: "جواہر لال نہرو", c: "ابوالکلام آزاد", d: "بھگت سنگھ" },
+        { q: "12. رم جھم رم جھم پانی برسا ... یہ گیت کس کے بارے میں ہے؟", a: "گرمی", b: "بارش", c: "آسمان", d: "بہار" },
+        { q: "13. پہیلی بوجھیے: 'میں کالا ہوں، میں موٹا اور بڑا ہوں، میرا کان لمبا ہے...'", a: "باگھ", b: "ہاتھی", c: "وہیل مچھلی", d: "گائے" },
+        { q: "14. کبوتر کی آواز ہے؟", a: "چوں چوں چوں", b: "ٹیں ٹیں ٹیں", c: "غٹرغوں غٹرغوں", d: "کائیں کائیں" },
+        { q: "15. ان میں ہم آواز الفاظ کی جوڑ نہیں ہے؟", a: "کفن - چمن", b: "اچھا - سچا", c: "ذکر - فکر", d: "جان - امن" }
+      ],
+
+      "Sanskrit_PartA": [
+        { q: "1. 'उपहासेन सह वर्तते' इति एकपदं किम्?", a: "सापहासम्", b: "सहपहासम्", c: "सोपहासम्", d: "सुपहासम्" },
+        { q: "2. आत्मोपदेशशतकस्य कर्ता कः?", a: "श्रीनारायणगुरुः", b: "चट्टम्बिस्वामी", c: "विवेकानन्दः", d: "नारायणभट्टः" },
+        { q: "3. माता ..... सह पणम् गच्छति", a: "पुत्रं", b: "पुत्रे", c: "पुत्राय", d: "पुत्रेण" },
+        { q: "4. केरलकलामण्डलस्य संस्थापकः कः?", a: "कुमारनाशान्", b: "उल्लूर्", c: "वैलोप्पिळ्ळि", d: "वळ्ळत्तोळ्" },
+        { q: "5. 'वत्स! आत्मप्रशंसया किं प्रयोजनम्' - कस्य वचनम्?", a: "सम्पातेः", b: "जटायुषः", c: "सुग्रीवस्य", d: "हनुमतः" },
+        { q: "6. 'पठतु' इति पदस्य लकारः", a: "लङ्", b: "लट्", c: "लोट्", d: "लृट्" },
+        { q: "7. अधोदत्तेषु 'आकाशम्' इत्यर्थकं पदम्", a: "गगनम्", b: "अरण्यम्", c: "तुषारम्", d: "जलदम्" },
+        { q: "8. 'पठति स्म'", a: "अपठत्", b: "पठतु", c: "पठति", d: "पठिष्यति" },
+        { q: "9. 'സ്നേഹഗായകന്' (സ്നേഹഗായകഃ) ഇതി പ്രഥിതഃ കഃ?", a: "വയലാർ", b: "വള്ളത്തോൾ", c: "എഴുത്തച്ഛൻ", d: "കുമാരനാശാൻ" },
+        { q: "10. समग्रस्य विश्वस्य श्वासकोशः इति विख्यातं वनम्", a: "तैगा", b: "आमसोण्", c: "कोङ्गो बासिन्", d: "हिमालयः" },
+        { q: "11. 'रामस्य' - अत्र विभक्तिः", a: "षष्ठी", b: "तृतीया", c: "प्रथमा", d: "सप्तमी" },
+        { q: "12. 'रघुवंशम्' कस्मिन् काव्यभागे अन्तर्भवति?", a: "नाटकम्", b: "महाकाव्यम्", c: "इतिहासम्", d: "चम्पू" },
+        { q: "13. उचितं गणं चित्वा लिखतु (1 कालिदासः-शाकुन्तलम्, 2 भवभूतिः-कर्णभारम्, 3 पतञ्जलिः-लीलावती, 4 शूद्रकः-मृच्छकटिकम्)", a: "1, 2 साधु", b: "2, 3 साधु", c: "3, 4 साधु", d: "1, 4 साधु" },
+        { q: "14. पदच्छेदं चित्वा लिखत: 'तस्यैव'", a: "तस्या + एव", b: "तस्य + इव", c: "तस्या + व", d: "तस्य + एव" },
+        { q: "15. अधोदत्तेषु रामायणमधिकृत्य अनुचिता प्रस्तावना", a: "1 साधु", b: "1, 2 साधु", c: "3 साधु", d: "4 साधु" }
+      ],
+
+      "Malayalam_PartB": [
+        { q: "16. വിത്തെന്ന മഹാദ്ഭുതം ഏത് സാഹിത്യ വിഭാഗത്തിൽപ്പെടുന്നു?", a: "ലേഖനം", b: "കഥ", c: "ആത്മകഥ", d: "ജീവചരിത്രം" },
+        { q: "17. 2025 ലെ വയലാർ അവാർഡ് ലഭിച്ചത് ആർക്കാണ്?", a: "സുഗതകുമാരി", b: "വിഷ്ണുനാരായണൻ നമ്പൂതിരി", c: "കെ.ജി.ശങ്കരപ്പിള്ള", d: "ഇ.സന്തോഷ് കുമാർ" },
+        { q: "18. കേരള സർക്കാർ കണ്ണൂർ ആസ്ഥാനമാക്കി സ്ഥാപിച്ച സ്വയംഭരണ സ്ഥാപനമാണ് കേരള ഫോക് ലോർ അക്കാദമി. ഈ അക്കാദമിയുമായി ബന്ധപ്പെട്ട പ്രസ്താവനകളിൽ ശരിയായത് ഏത്?<br>i 1995 ൽ സ്ഥാപിച്ചു<br>ii നാടൻ കലകളെ സംരക്ഷിക്കുന്നു<br>iii ആസ്ഥാനം തലശ്ശേരി ആണ്<br>iv നാടൻ കലകളെ പ്രചരിപ്പിക്കുന്നു", a: "i, ii പ്രസ്താവനകൾ മാത്രം ശരി", b: "i, ii, iii ശരിയാണ്", c: "i, ii, iv ശരിയാണ്", d: "എല്ലാം ശരിയാണ്" },
+        { q: "19. ഏറ്റവും മികച്ച കാർഷിക പ്രവർത്തനം നടത്തുന്ന വിദ്യാർത്ഥിക്ക് സംസ്ഥാന കൃഷിവകുപ്പ് നൽകുന്ന അവാർഡ്?", a: "കർഷകോത്തമ", b: "കർഷക രത്നം", c: "ബാല കർഷകൻ", d: "കർഷക പ്രതിഭ" },
+        { q: "20. 'കാല് പുതയും വരമ്പത്തെ പാഴ്ചെളിത്താരയിൽ ത്താമരത്താർ വിടർത്തി' ഇതിൽ 'താമരത്താർ' എന്നതുകൊണ്ട് കവി ഉദ്ദേശിച്ചത് എന്ത്?", a: "സ്ത്രീകളുടെ പാദങ്ങൾ", b: "സ്ത്രീകളുടെ കൈകൾ", c: "സ്ത്രീകളുടെ മുഖം", d: "സ്ത്രീകളുടെ കണ്ണുകൾ" },
+        { q: "21. മുഖാവരണം എങ്ങനെ വിഗ്രഹിക്കാം?", a: "മുഖത്തിന്റെ ആവരണം", b: "മുഖത്തിനാൽ ആവരണം ചെയ്യപ്പെട്ടത്", c: "മുഖത്തിനു വേണ്ടിയുള്ള ആവരണം", d: "മുഖം ആവരണം ചെയ്യാനുള്ള വസ്തു" },
+        { q: "22. വലംകൈ എന്ന ശൈലിയുടെ അർത്ഥം?", a: "വലത്തെ കൈ", b: "വലതു ഭാഗത്തെ കൈ", c: "ഏറ്റവും വലിയ കൈ", d: "ഏറ്റവും വലിയ സഹായി" },
+        { q: "23. സൂചനകളിൽ നിന്നും എഴുത്തുകാരനെ കണ്ടെത്തുക:<br>1955 ഏപ്രിൽ 10ന് ജനിച്ചു<br>വിദ്യാഭ്യാസ വകുപ്പിൽ ജോലിക്കാരനായിരുന്നു<br>അമ്മ മലയാളം, കീഴാളൻ കവിതാസമാഹാരങ്ങൾ<br>2011 ൽ കേരള സാഹിത്യ അക്കാദമി അവാർഡ് ലഭിച്ചു", a: "കുരീപ്പുഴ ശ്രീകുമാർ", b: "സച്ചിദാനന്ദൻ", c: "കടമ്മനിട്ട രാമകൃഷ്ണൻ", d: "അയ്മനം ജോൺ" },
+        { q: "24. 'പാറിവന്ന സെപ്റ്റംബർ മുകിലുകൾ നാലുദിക്കിലും... തീക്കുടുക്കകളുടയ്ക്കുമന്തിയിൽ...' കവിതയിലെ 'തീക്കുടുക്കകൾ' എന്ന പ്രയോഗത്തിന്റെ അർത്ഥമെന്ത്?", a: "മേഘങ്ങൾ കൊണ്ട് കറുത്തുപോയി", b: "മഴ ശക്തമായി പെയ്യുന്നത്", c: "സന്ധ്യാസമയത്തെ ഇടിമുഴക്കങ്ങളുടെ ശബ്ദതീവ്രതയും ഭയാനകതയും", d: "ശക്തമായ കാറ്റിന്റെ വരവ്" },
+        { q: "25. കഥകളി തുടങ്ങിക്കഴിഞ്ഞുവെന്നറിയിക്കുന്ന ഗണപതി കൊട്ടാണ്...", a: "തോടയം", b: "കേളികൊട്ട്", c: "അരങ്ങുകേളി", d: "വന്ദനശ്ലോകം" },
+        { q: "26. 'വിത്തുഗുണം പത്തുഗുണം' എന്ന ചൊല്ല് താഴെ കാണുന്ന ഏത് പ്രസ്താവനയുമായി ബന്ധപ്പെട്ടിരിക്കുന്നു?", a: "വിത്ത് വിതച്ചാൽ പത്തോളം ഗുണമുണ്ട്", b: "നല്ല വിത്ത് വിതച്ചാൽ നല്ല വിളവ് ലഭിക്കും", c: "ഒരു വിത്തിന് പത്തു ഗുണങ്ങളുണ്ട്", d: "വിത്തിന് വിളവിൽ യാതൊരു പങ്കുമില്ല" },
+        { q: "27. പദച്ചേരുവകളെ ചേർത്തെഴുതുമ്പോൾ വേറിട്ടുനിൽക്കുന്നത് ഏത്?", a: "എണ്ണിത്തിട്ടപ്പെടുത്തി - എണ്ണി, തിട്ടപ്പെടുത്തി", b: "കൃത്യമായിരുന്നില്ല - കൃത്യം, ആയിരുന്നില്ല", c: "സമയമാകുമ്പോൾ - സമയം, ആകുമ്പോൾ", d: "തുല്യമായി - തുല്യം, ആയി" },
+        { q: "28. പൂങ്കാവനത്തിലെ സുവർണ്ണകാലം കഴിഞ്ഞുപോയി എന്ന് പറയുന്നത് എന്തുകൊണ്ട്?", a: "പൂക്കൾ പല വർണ്ണങ്ങളായി വേർപിരിഞ്ഞു", b: "സൂര്യരശ്മികൾ പൂക്കളെ കരിച്ചു കളഞ്ഞു", c: "പ്രകൃതിയിൽ മഞ്ഞുകണങ്ങൾ ഇല്ലാതായി", d: "പൂക്കൾക്ക് വർണ്ണം നഷ്ടമായി" },
+        { q: "29. കൂട്ടത്തിൽ ഒരാൾ കൊഴിഞ്ഞു വീഴുമ്പോൾ മറ്റുള്ളവയുടെ പ്രതികരണമെന്തായിരുന്നു?", a: "അഭിമാനത്തോടെ ശിരസ്സു കുനിച്ചു", b: "മറ്റുള്ളവർക്ക് സുഗന്ധം പരത്തി", c: "ശിരസ്സു കുനിച്ച് കണ്ണീരൊഴുക്കി", d: "സന്തോഷത്തോടെ ഉല്ലസിച്ചു" },
+        { q: "30. ആരാമത്തിലെ പൂക്കളുടെ പ്രത്യേകത എന്തായിരുന്നു?", a: "മഞ്ഞിൻ കണങ്ങളിൽ കുളിച്ചുനിന്നു", b: "മറ്റുള്ളവരുടെ പതനത്തിൽ ആഹ്ലാദിച്ചു", c: "നിറത്തിന്റെ പേരിൽ വേർതിരിവ് കാണിച്ചു", d: "മിഥ്യാഭിമാനമില്ലാതെ ഏകവർണ്ണമായി ആഹ്ലാദിച്ചു" }
+      ],
+
+      "Maths_Malayalam": [
+        { q: "31. ചിത്രത്തിൽ ABCD ഒരു സാമാന്തരികമാണ്. ഇതിനകത്തെ ത്രികോണത്തിലെ കോണുകൾ ഏതെല്ലാം?", a: "(30°, 50°, 100°)", b: "(40°, 60°, 80°)", c: "(70°, 30°, 80°)", d: "(60°, 50°, 70°)" },
+        { q: "32. 4 ലിറ്റർ പാൽ 3 പേർക്ക് ഒരു പോലെ വീതിച്ചാൽ ഓരോരുത്തർക്കും ലഭിക്കുന്ന പാലിന്റെ അളവിന് തുല്യമായത് ഏതാണ്?<br>(i) 4/3 ലിറ്റർ (ii) 3/4 ലിറ്റർ (iii) 1 1/3 ലിറ്റർ (iv) 1 1/4 ലിറ്റർ", a: "(i) ഉം (iii) ഉം ശരി", b: "(ii) ഉം (iv) ഉം ശരി", c: "(i) ഉം (iv) ഉം ശരി", d: "(ii) ഉം (iii) ഉം ശരി" },
+        { q: "33. ഒരു ത്രികോണത്തിന്റെ ചുറ്റളവ് 20 സെ.മീ ആണ്. താഴെയുള്ള അളവുകളിൽ അതിന്റെ ഒരു വശത്തിന്റെ നീളം ആകാവുന്നത് ഏത്?", a: "10 സെ.മീ", b: "11 സെ.മീ", c: "8 സെ.മീ", d: "14 സെ.മീ" },
+        { q: "34. വിട്ടു പോയ സംഖ്യ കണ്ടെത്തുക: (മാട്രിക്സ് പാറ്റേൺ)", a: "22", b: "32", c: "30", d: "34" },
+        { q: "35. 5 × 0.5 × 0.05 × 10⁴ = ?<br>(i) 1250 (ii) (0.5)⁴ (iii) 0.125 × 10000 (iv) 12.5 × 10²", a: "(i), (ii), (iii) ഇവ ശരിയാണ്", b: "(i), (ii), (iv) ഇവ ശരിയാണ്", c: "(i), (iii), (iv) ഇവ ശരിയാണ്", d: "(ii), (iii), (iv) ഇവ ശരിയാണ്" },
+        { q: "36. ഒരു സംഖ്യയുടെ 5 മടങ്ങിൽ നിന്നും 4 കുറച്ചതും അതേ സംഖ്യയുടെ 4 മടങ്ങിൽ നിന്ന് 3 കുറച്ചതും തമ്മിലുള്ള വ്യത്യാസം 5 ആണ്. ബീജഗണിത രൂപം അല്ലാത്തത് ഏതാണ്?", a: "(5x - 4) - 5 = 4x - 3", b: "(5x - 4) - (4x - 3) = 5", c: "(4x - 3) + 5 = (5x - 4)", d: "5x - 4 - 4x - 3 = 5" },
+        { q: "37. ചിത്രത്തിലെ ചെറിയ സമചതുരത്തിന്റെ പരപ്പളവും വലിയ ചതുരത്തിന്റെ പരപ്പളവും തമ്മിലുള്ള അംശബന്ധം 1:18. ഇതിൽ ഏതാണ് ശരി?", a: "പ്രസ്താവന ശരി, കാരണം തെറ്റ്", b: "പ്രസ്താവന തെറ്റ്, കാരണം ശരി", c: "പ്രസ്താവനയും കാരണവും ശരി", d: "പ്രസ്താവനയും കാരണവും തെറ്റ്" },
+        { q: "38. 4, 5, 6, 7 എന്നീ അക്കങ്ങൾ ആവർത്തിക്കാതെ ഉപയോഗിച്ച് 5 ന്റെ ഗുണിതങ്ങളായ എത്ര നാലക്ക സംഖ്യകൾ ഉണ്ടാക്കാൻ സാധിക്കും?", a: "5", b: "6", c: "8", d: "12" },
+        { q: "39. 148 + 137 + 185 + 192 = 662 ആയാൽ 148 ¼ + 137 ⅝ + 185 ¾ + 192 ⅙ = ?", a: "662 ⁵/₁₂", b: "663 ¼", c: "663", d: "664" },
+        { q: "40. ഒരു സമചതുരത്തെ രണ്ടു ചതുരങ്ങളായി ഭാഗിച്ചിരിക്കുന്നു. സമചതുരത്തിന്റെ ചുറ്റളവ് 64 സെ.മീ. എങ്കിൽ പുതിയ രണ്ടു ചതുരങ്ങളുടെ ചുറ്റളവുകളുടെ തുക എത്ര?", a: "80 സെ.മീ", b: "90 സെ.മീ", c: "96 സെ.മീ", d: "128 സെ.മീ" },
+        { q: "41. 2⁶ ന്റെ ഇരട്ടിയാകാവുന്നത് ഏവ?<br>(i) 2⁶ + 2⁶ (ii) 2⁷ (iii) 2⁸ ന്റെ പകുതി (iv) 4³ ന്റെ ഇരട്ടി", a: "(i) ഉം (iii) ഉം", b: "(ii) ഉം (iv) ഉം", c: "(i), (ii), (iii) എന്നിവ", d: "ഇവയെല്ലാം" },
+        { q: "42. A + B = 58, B + C = 72, C + A = 70 ആയാൽ A + B + C എത്ര?", a: "100", b: "200", c: "130", d: "142" },
+        { q: "43. ചുവടെ കൊടുത്തിരിക്കുന്ന സംഖ്യാ ശ്രേണിയിലെ 10-ാമത്തെ സംഖ്യ ഏത്? (1, 3, 6, 10, 15...)", a: "50", b: "55", c: "100", d: "110" },
+        { q: "44. കോളം A യിലെ സംഖ്യകളുടെ ഘടകങ്ങളുടെ എണ്ണം കോളം B യിൽ നിന്ന് തിരഞ്ഞെടുത്ത് എഴുതുക.<br>(i) 2³ (ii) 6² (iii) 2×5² (iv) 5²", a: "(i)-c, (ii)-b, (iii)-d, (iv)-a", b: "(i)-c, (ii)-a, (iii)-d, (iv)-b", c: "(i)-c, (ii)-a, (iii)-b, (iv)-d", d: "(i)-c, (ii)-d, (iii)-a, (iv)-b" },
+        { q: "45. 1 മുതൽ 75 വരെയുള്ള സംഖ്യകൾ എഴുതി ഗുണിച്ചാൽ കിട്ടുന്ന സംഖ്യയുടെ അവസാനത്തിൽ എത്ര പൂജ്യങ്ങൾ ഉണ്ടാകും?", a: "15", b: "17", c: "18", d: "16" },
+        { q: "46. 3 ന്റെ രണ്ട് കൃതികളുടെ തുക 108 ആയാൽ അവയുടെ വ്യത്യാസം എത്ര?", a: "48", b: "72", c: "64", d: "54" },
+        { q: "47. 105 × 45 = 4725 ആയാൽ 47.25 / 4.5 = ?", a: "105", b: "1.05", c: "10.5", d: "0.105" },
+        { q: "48. ഒരു കലണ്ടറിൽ നാലു സംഖ്യകൾ എഴുതിയ ഒരു സമചതുരം അടയാളപ്പെടുത്തിയിരിക്കുന്നു. നാലു സംഖ്യകളുടെ തുക 56 ആയാൽ ഏറ്റവും വലിയ സംഖ്യ എത്രയാണ്?", a: "19", b: "17", c: "20", d: "18" },
+        { q: "49. ചുവടെ നൽകിയിരിക്കുന്നവയിൽ മട്ടത്രികോണത്തിന്റെ വശമാകാത്ത അളവുകൾ ഏത്?", a: "(3, 4, 5)", b: "(5, 12, 13)", c: "(30, 60, 90)", d: "(30, 40, 50)" },
+        { q: "50. ഒരു സമചതുരത്തിന്റെ വശങ്ങളെല്ലാം 10% നീളം കൂട്ടി വലിയ സമചതുരം ആക്കിയാൽ പരപ്പളവ് എത്ര ശതമാനം കൂടും?", a: "10%", b: "20%", c: "21%", d: "100%" }
+      ],
+
+      "Maths_English": [
+        { q: "31. In the figure, ABCD is a parallelogram. What are the angles of the triangle inside it?", a: "(30°, 50°, 100°)", b: "(40°, 60°, 80°)", c: "(70°, 30°, 80°)", d: "(60°, 50°, 70°)" },
+        { q: "32. If 4 liters of milk are divided equally among 3 people, the amount of milk each person will get is equal to:<br>(i) 4/3 L (ii) 3/4 L (iii) 1 1/3 L (iv) 1 1/4 L", a: "(i) & (iii) are Correct", b: "(ii) & (iv) are Correct", c: "(i) & (iv) are Correct", d: "(ii) & (iii) are Correct" },
+        { q: "33. The perimeter of a triangle is 20 cm. Which of the following measurements could be the length of one of its sides?", a: "10 cm", b: "11 cm", c: "8 cm", d: "14 cm" },
+        { q: "34. Find the missing number in the matrix pattern.", a: "22", b: "32", c: "30", d: "34" },
+        { q: "35. 5 × 0.5 × 0.05 × 10⁴ = ?<br>(i) 1250 (ii) (0.5)⁴ (iii) 0.125 × 10000 (iv) 12.5 × 10²", a: "(i), (ii) and (iii) are correct", b: "(i), (ii) and (iv) are correct", c: "(i), (iii) and (iv) are correct", d: "(ii), (iii) and (iv) are correct" },
+        { q: "36. The difference between 4 subtracted from 5 times a number and 3 subtracted from 4 times the same number is 5. Which is NOT the algebraic form?", a: "(5x - 4) - 5 = 4x - 3", b: "(5x - 4) - (4x - 3) = 5", c: "(4x - 3) + 5 = (5x - 4)", d: "5x - 4 - 4x - 3 = 5" },
+        { q: "37. Ratio of areas of small square and large rectangle in the figure is 1:18. Which statement is correct?", a: "Statement is true, reason is false", b: "Statement is false, reason is true", c: "Statement and reason are true", d: "Statement and reason are false" },
+        { q: "38. How many four-digit numbers that are multiples of 5 can be formed using the digits 4, 5, 6, and 7 without repetition?", a: "5", b: "6", c: "8", d: "12" },
+        { q: "39. If 148 + 137 + 185 + 192 = 662, then what is 148 ¼ + 137 ⅝ + 185 ¾ + 192 ⅙ ?", a: "662 ⁵/₁₂", b: "663 ¼", c: "663", d: "664" },
+        { q: "40. A square is divided into two rectangles. The perimeter of the square is 64 cm. What is the sum of the perimeters of the two new rectangles?", a: "80 cm", b: "90 cm", c: "96 cm", d: "128 cm" },
+        { q: "41. What can be the double of 2⁶?<br>(i) 2⁶ + 2⁶ (ii) 2⁷ (iii) Half of 2⁸ (iv) Double of 4³", a: "(i) & (iii)", b: "(ii) & (iv)", c: "(i), (ii) & (iii)", d: "All of these" },
+        { q: "42. If A + B = 58, B + C = 72, C + A = 70, then what is A + B + C ?", a: "100", b: "200", c: "130", d: "142" },
+        { q: "43. Which is the 10th number in the following number pattern? (1, 3, 6, 10, 15...)", a: "50", b: "55", c: "100", d: "110" },
+        { q: "44. Match the number of factors of numbers in Column A with Column B:<br>(i) 2³ (ii) 6² (iii) 2×5² (iv) 5²", a: "(i)-c, (ii)-b, (iii)-d, (iv)-a", b: "(i)-c, (ii)-a, (iii)-d, (iv)-b", c: "(i)-c, (ii)-a, (iii)-b, (iv)-d", d: "(i)-c, (ii)-d, (iii)-a, (iv)-b" },
+        { q: "45. How many zeros will there be at the end of the number when you multiply numbers from 1 to 75?", a: "15", b: "17", c: "18", d: "16" },
+        { q: "46. If the sum of two powers of 3 is 108, find the difference of these two numbers.", a: "48", b: "72", c: "64", d: "54" },
+        { q: "47. If 105 × 45 = 4725, then what is 47.25 / 4.5 ?", a: "105", b: "1.05", c: "10.5", d: "0.105" },
+        { q: "48. A square containing four numbers is marked in a calendar. If the sum of these four numbers is 56, what is the largest number?", a: "19", b: "17", c: "20", d: "18" },
+        { q: "49. Which of the following measurements cannot be the sides of a right-angled triangle?", a: "(3, 4, 5)", b: "(5, 12, 13)", c: "(30, 60, 90)", d: "(30, 40, 50)" },
+        { q: "50. If all the sides of a square are increased by 10% to make a larger square, by what percentage will the area increase?", a: "10%", b: "20%", c: "21%", d: "100%" }
+      ]
+    };
+
+    function switchMainTab(targetTabId) {
+      var panes = document.querySelectorAll('.tab-pane');
+      for (var i = 0; i < panes.length; i++) {
+        panes[i].classList.add('hidden');
+      }
+      var target = document.getElementById(targetTabId);
+      if (target) target.classList.remove('hidden');
+
+      var tabs = [
+        { btn: 'tabBtnDownload', pane: 'downloadTab' },
+        { btn: 'tabBtnLive', pane: 'liveExamTab' },
+        { btn: 'tabBtnResult', pane: 'resultTab' }
+      ];
+
+      tabs.forEach(function(t) {
+        var btn = document.getElementById(t.btn);
+        if (btn) {
+          if (t.pane === targetTabId) {
+            btn.classList.add('text-[#0b3c68]', 'border-[#0b3c68]', 'bg-slate-100');
+            btn.classList.remove('text-slate-600', 'border-transparent');
+          } else {
+            btn.classList.remove('text-[#0b3c68]', 'border-[#0b3c68]', 'bg-slate-100');
+            btn.classList.add('text-slate-600', 'border-transparent');
+          }
+        }
+      });
+    }
+
+    function selectExamMedium(medium) {
+      selectedActiveMedium = medium;
+      var malBtn = document.getElementById('medBtnMal');
+      var engBtn = document.getElementById('medBtnEng');
+
+      if (medium === 'Malayalam') {
+        malBtn.classList.add('active');
+        engBtn.classList.remove('active');
+      } else {
+        engBtn.classList.add('active');
+        malBtn.classList.remove('active');
+      }
+
+      var langStep = document.getElementById('langSelectionStep');
+      if (langStep) langStep.classList.remove('hidden');
+
+      // Default select Malayalam AT if language not set
+      if (!selectedActiveLang) {
+        selectFirstLanguage('Malayalam');
+      } else {
+        selectFirstLanguage(selectedActiveLang);
+      }
+    }
+
+    function selectFirstLanguage(lang) {
+      selectedActiveLang = lang;
+      
+      var buttons = ['langBtnMal', 'langBtnArab', 'langBtnUrdu', 'langBtnSans'];
+      buttons.forEach(function(id) {
+        var b = document.getElementById(id);
+        if (b) b.classList.remove('active');
+      });
+
+      if (lang === 'Malayalam') document.getElementById('langBtnMal')?.classList.add('active');
+      else if (lang === 'Arabic') document.getElementById('langBtnArab')?.classList.add('active');
+      else if (lang === 'Urdu') document.getElementById('langBtnUrdu')?.classList.add('active');
+      else if (lang === 'Sanskrit') document.getElementById('langBtnSans')?.classList.add('active');
+
+      displaySelectedQuestionsPaper1(selectedActiveMedium, lang);
+    }
+
+    function displaySelectedQuestionsPaper1(medium, lang) {
+      var container = document.getElementById('questionsContainer');
+      var medLabel = medium === 'Malayalam' ? 'മലയാളം മീഡിയം' : 'ഇംഗ്ലീഷ് മീഡിയം';
+      
+      var partAKey = lang + "_PartA";
+      var partBKey = "Malayalam_PartB";
+      var partCKey = medium === 'English' ? 'Maths_English' : 'Maths_Malayalam';
+
+      var partA = EXAM_QUESTION_BANK_PAPER1[partAKey] || [];
+      var partB = EXAM_QUESTION_BANK_PAPER1[partBKey] || [];
+      var partC = EXAM_QUESTION_BANK_PAPER1[partCKey] || [];
+
+      var langFontClass = 'font-malayalam';
+      if (lang === 'Arabic') langFontClass = 'font-arabic text-right';
+      else if (lang === 'Urdu') langFontClass = 'font-urdu text-right';
+      else if (lang === 'Sanskrit') langFontClass = 'font-sanskrit';
+
+      var html = '<div class="border-2 border-emerald-600 bg-emerald-50/40 p-4 rounded-xl shadow-sm">';
+      
+      html += '<div class="bg-gradient-to-r from-[#0b3c68] to-slate-800 text-white p-4 rounded-lg shadow-md mb-6 flex flex-col md:flex-row justify-between items-center gap-3 no-print">';
+      html += '<div>';
+      html += '<div class="text-xs font-bold text-amber-300 font-malayalam uppercase tracking-wider mb-0.5">⚡ ക്വസ്റ്റ്യൻ പേപ്പർ പ്രിന്റ് / PDF ആയി സേവ് ചെയ്യാൻ:</div>';
+      html += '<div class="text-base font-extrabold font-malayalam">ഈ പേപ്പറിന്റെ ലൈവ് OMR എക്സാം എഴുതുകയോ PDF ഡൗൺലോഡ് ചെയ്യുകയോ ചെയ്യാം</div>';
+      html += '</div>';
+      html += '<div class="flex flex-wrap gap-2 w-full md:w-auto">';
+      html += '<button onclick="exportToPDF(\'questionsContainer\', \'SMART_VIDHYA_Paper1_Question_Paper.pdf\')" class="w-full md:w-auto bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold px-4 py-2.5 rounded-lg transition-all shadow-md text-xs md:text-sm font-malayalam flex items-center justify-center gap-1.5">';
+      html += '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H7a2 2 0 00-2 2v4h10z"></path></svg>';
+      html += '🖨️ PDF ഡൗൺലോഡ് ചെയ്യുക (Download PDF)';
+      html += '</button>';
+      html += '<button onclick="startLiveExamFromPaper1(\'' + medium + '\', \'' + lang + '\')" class="w-full md:w-auto bg-amber-400 hover:bg-amber-500 text-slate-900 font-extrabold px-4 py-2.5 rounded-lg transition-all shadow-md text-xs md:text-sm font-malayalam flex items-center justify-center gap-1.5 whitespace-nowrap">';
+      html += '▶ ലൈവ് എക്സാം ആരംഭിക്കുക';
+      html += '</button>';
+      html += '</div>';
+      html += '</div>';
+
+      html += '<div class="flex flex-wrap justify-between items-center border-b border-emerald-300 pb-3 mb-4">';
+      html += '<h2 class="text-lg font-bold text-emerald-900 font-malayalam">SMART VIDHYA USS MODEL EXAM (PAPER I) - ' + medLabel.toUpperCase() + ' [' + lang.toUpperCase() + ']</h2>';
+      html += '</div>';
+
+      // Part A Questions (1st Language)
+      html += '<div class="bg-emerald-800 text-white font-bold text-xs md:text-sm p-2 rounded mb-2 font-malayalam shadow-sm">PART-A: 1st Language (' + lang + ' AT) - ചോദ്യങ്ങൾ 1 മുതൽ 15 വരെ</div>';
+      html += '<div class="space-y-2 mb-4">';
+      partA.forEach(function(q) {
+        html += '<div class="q-card bg-white border border-emerald-200 p-2.5 rounded-lg shadow-sm hover:border-emerald-400 transition-all">';
+        html += '<div class="font-bold text-xs md:text-sm text-slate-800 mb-1.5 ' + langFontClass + '">' + q.q + '</div>';
+        html += '<div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px] text-slate-700 ' + langFontClass + '">';
+        html += '<div class="bg-slate-50 p-1.5 rounded border border-slate-200"><b>(A)</b> ' + q.a + '</div>';
+        html += '<div class="bg-slate-50 p-1.5 rounded border border-slate-200"><b>(B)</b> ' + q.b + '</div>';
+        html += '<div class="bg-slate-50 p-1.5 rounded border border-slate-200"><b>(C)</b> ' + q.c + '</div>';
+        html += '<div class="bg-slate-50 p-1.5 rounded border border-slate-200"><b>(D)</b> ' + q.d + '</div>';
+        html += '</div></div>';
+      });
+      html += '</div>';
+
+      // Part B Questions (Malayalam BT)
+      html += '<div class="bg-emerald-800 text-white font-bold text-xs md:text-sm p-2 rounded mb-2 font-malayalam shadow-sm">PART-B: Malayalam (മലയാളം BT - അടിസ്ഥാന പാഠാവലി) - ചോദ്യങ്ങൾ 16 മുതൽ 30 വരെ</div>';
+      html += '<div class="space-y-2 mb-4">';
+      partB.forEach(function(q) {
+        html += '<div class="q-card bg-white border border-emerald-200 p-2.5 rounded-lg shadow-sm hover:border-emerald-400 transition-all">';
+        html += '<div class="font-bold text-xs md:text-sm text-slate-800 mb-1.5 font-malayalam">' + q.q + '</div>';
+        html += '<div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px] text-slate-700 font-malayalam">';
+        html += '<div class="bg-slate-50 p-1.5 rounded border border-slate-200"><b>(A)</b> ' + q.a + '</div>';
+        html += '<div class="bg-slate-50 p-1.5 rounded border border-slate-200"><b>(B)</b> ' + q.b + '</div>';
+        html += '<div class="bg-slate-50 p-1.5 rounded border border-slate-200"><b>(C)</b> ' + q.c + '</div>';
+        html += '<div class="bg-slate-50 p-1.5 rounded border border-slate-200"><b>(D)</b> ' + q.d + '</div>';
+        html += '</div></div>';
+      });
+      html += '</div>';
+
+      // Part C Questions (Mathematics)
+      html += '<div class="bg-emerald-800 text-white font-bold text-xs md:text-sm p-2 rounded mb-2 font-malayalam shadow-sm">PART-C: Mathematics (ഗണിതശാസ്ത്രം) - ചോദ്യങ്ങൾ 31 മുതൽ 50 വരെ [' + medLabel + ']</div>';
+      html += '<div class="space-y-2 mb-4">';
+      partC.forEach(function(q) {
+        html += '<div class="q-card bg-white border border-emerald-200 p-2.5 rounded-lg shadow-sm hover:border-emerald-400 transition-all">';
+        html += '<div class="font-bold text-xs md:text-sm text-slate-800 mb-1.5 font-malayalam">' + q.q + '</div>';
+        html += '<div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px] text-slate-700 font-malayalam">';
+        html += '<div class="bg-slate-50 p-1.5 rounded border border-slate-200"><b>(A)</b> ' + q.a + '</div>';
+        html += '<div class="bg-slate-50 p-1.5 rounded border border-slate-200"><b>(B)</b> ' + q.b + '</div>';
+        html += '<div class="bg-slate-50 p-1.5 rounded border border-slate-200"><b>(C)</b> ' + q.c + '</div>';
+        html += '<div class="bg-slate-50 p-1.5 rounded border border-slate-200"><b>(D)</b> ' + q.d + '</div>';
+        html += '</div></div>';
+      });
+      html += '</div>';
+
+      // Bottom Spacer for PDF
+      html += '<div class="h-6 w-full"></div>';
+
+      // Bottom Action Buttons
+      html += '<div class="text-center bg-white p-4 rounded-xl border-2 border-emerald-500 mt-4 shadow-sm no-print flex flex-col md:flex-row justify-center items-center gap-3">';
+      html += '<button onclick="exportToPDF(\'questionsContainer\', \'SMART_VIDHYA_Paper1_Question_Paper.pdf\')" class="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-lg transition-all shadow-md font-malayalam text-base flex items-center justify-center gap-2">';
+      html += '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H7a2 2 0 00-2 2v4h10z"></path></svg>';
+      html += '🖨️ ഈ ക്വസ്റ്റ്യൻ പേപ്പർ PDF ആയി സേവ് ചെയ്യുക';
+      html += '</button>';
+      html += '<button onclick="startLiveExamFromPaper1(\'' + medium + '\', \'' + lang + '\')" class="w-full md:w-auto bg-[#0b3c68] hover:bg-slate-800 text-white font-bold px-8 py-3 rounded-lg transition-all shadow-md font-malayalam text-base">';
+      html += '▶ ലൈവ് OMR എക്സാം ആരംഭിക്കുക';
+      html += '</button>';
+      html += '</div>';
+
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    function startLiveExamFromPaper1(medVal, langVal) {
+      var medRadios = document.querySelectorAll('input[name="omr_med"]');
+      medRadios.forEach(function(r) {
+        if (r.value === medVal) r.checked = true;
+      });
+
+      var langRadios = document.querySelectorAll('input[name="omr_lang_at"]');
+      langRadios.forEach(function(r) {
+        if (r.value === langVal) r.checked = true;
+      });
+
+      switchMainTab('liveExamTab');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderRollMatrixStructure() {
+      var matrix = document.getElementById('rollBubbleMatrix');
+      var html = '';
+      for (var c = 0; c < 6; c++) {
+        html += '<div class="flex flex-col items-center gap-1">';
+        for (var d = 0; d <= 9; d++) {
+          html += '<div class="roll-bubble" id="rb_' + c + '_' + d + '">' + d + '</div>';
+        }
+        html += '</div>';
+      }
+      matrix.innerHTML = html;
+    }
+
+    function updateRollOmrBubbles(val) {
+      for (var c = 0; c < 6; c++) {
+        for (var d = 0; d <= 9; d++) {
+          var b = document.getElementById('rb_' + c + '_' + d);
+          if (b) b.classList.remove('filled');
+        }
+      }
+      for (var i = 0; i < val.length && i < 6; i++) {
+        var num = parseInt(val[i], 10);
+        if (!isNaN(num)) {
+          var target = document.getElementById('rb_' + i + '_' + num);
+          if (target) target.classList.add('filled');
+        }
+      }
+    }
+
+    function renderOmrQuestionRows(containerId, startNum, endNum) {
+      var container = document.getElementById(containerId);
+      var html = '';
+      var opts = ['A', 'B', 'C', 'D'];
+      for (var i = startNum; i <= endNum; i++) {
+        html += '<div class="flex items-center justify-between py-1 border-b border-slate-200 text-xs">';
+        html += '<span class="font-bold text-slate-800 w-6">' + i + '</span>';
+        html += '<div class="flex gap-2">';
+        opts.forEach(function(op) {
+          html += '<label class="q-bubble-item inline-flex items-center gap-0.5">';
+          html += '<input type="radio" name="ans_' + i + '" value="' + op + '">';
+          html += '<span class="font-bold text-[11px] text-slate-700">' + op + '</span>';
+          html += '</label>';
+        });
+        html += '</div></div>';
+      }
+      container.innerHTML = html;
+    }
+
+    var canvas = document.getElementById('sigCanvas');
+    var ctx = canvas ? canvas.getContext('2d') : null;
+    var isDrawing = false;
+
+    function resizeCanvas() {
+      if (!canvas) return;
+      var rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+    }
+
+    function drawSignature(e) {
+      if (!isDrawing || !ctx) return;
+      var rect = canvas.getBoundingClientRect();
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#000';
+      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+    }
+
+    function clearSignatureCanvas() {
+      if (!ctx || !canvas) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath();
+    }
+
+    function handleOmrSubmission(e) {
+      e.preventDefault();
+      var name = document.getElementById('studentName').value.trim();
+      var roll = document.getElementById('studentRoll').value.trim();
+
+      // Validate Name strictly in Uppercase English
+      if (!name || !/^[A-Z\s]+$/.test(name)) {
+        showNoticeModal('ശ്രദ്ധിക്കുക', 'കുട്ടിയുടെ പേര് ഇംഗ്ലീഷ് ക്യാപിറ്റൽ അക്ഷരങ്ങളിൽ മാത്രം നൽകുക!');
+        return;
+      }
+
+      // Validate Roll Number length
+      if (roll.length !== 6) {
+        showNoticeModal('ശ്രദ്ധിക്കുക', 'ദയവായി നിങ്ങളുടെ 6 അക്ക റോൾ നമ്പർ പൂർണ്ണമായി നൽകുക!');
+        return;
+      }
+
+      var submissions = JSON.parse(localStorage.getItem('SMART_USS_EXAMS_DB_P1') || '{}');
+
+      // Unique Roll Check
+      if (submissions[roll]) {
+        showNoticeModal(
+          'ഈ റോൾ നമ്പർ രജിസ്റ്റർ ചെയ്തിട്ടുണ്ട്!',
+          'ഈ റോൾ നമ്പർ (' + roll + ') ഉപയോഗിച്ച് ഇതിനകം ഒരു പരീക്ഷ സബ്മിറ്റ് ചെയ്തിട്ടുണ്ട് (Already Registered). ഒരു റോൾ നമ്പർ ഉപയോഗിച്ച് ഒരു തവണ മാത്രമേ ലൈവ് പരീക്ഷ എഴുതാൻ സാധിക്കൂ.'
+        );
+        return;
+      }
+
+      var langChecked = document.querySelector('input[name="omr_lang_at"]:checked');
+      var lang = langChecked ? langChecked.value : 'Malayalam';
+
+      var medChecked = document.querySelector('input[name="omr_med"]:checked');
+      var med = medChecked ? medChecked.value : 'Malayalam';
+
+      var scorePartA = 0;
+      var scorePartB = 0;
+      var scorePartC = 0;
+      var userAnswers = {};
+
+      // Grade Part A (1st Language AT)
+      var keyA = MASTER_EVALUATION_KEY_PAPER1[lang] || MASTER_EVALUATION_KEY_PAPER1['Malayalam'];
+      for (var i = 1; i <= 15; i++) {
+        var userAnsA = document.querySelector('input[name="ans_' + i + '"]:checked');
+        if (userAnsA) {
+          userAnswers[i] = userAnsA.value;
+          if (userAnsA.value === keyA[i]) scorePartA++;
+        }
+      }
+
+      // Grade Part B (Malayalam BT)
+      var keyB = MASTER_EVALUATION_KEY_PAPER1['Malayalam_BT'];
+      for (var j = 16; j <= 30; j++) {
+        var userAnsB = document.querySelector('input[name="ans_' + j + '"]:checked');
+        if (userAnsB) {
+          userAnswers[j] = userAnsB.value;
+          if (userAnsB.value === keyB[j]) scorePartB++;
+        }
+      }
+
+      // Grade Part C (Mathematics)
+      var keyC = MASTER_EVALUATION_KEY_PAPER1['Maths'];
+      for (var k = 31; k <= 50; k++) {
+        var userAnsC = document.querySelector('input[name="ans_' + k + '"]:checked');
+        if (userAnsC) {
+          userAnswers[k] = userAnsC.value;
+          if (userAnsC.value === keyC[k]) scorePartC++;
+        }
+      }
+
+      var totalScore = scorePartA + scorePartB + scorePartC;
+
+      submissions[roll] = {
+        name: name,
+        roll: roll,
+        lang: lang,
+        med: med,
+        partA: scorePartA,
+        partB: scorePartB,
+        partC: scorePartC,
+        total: totalScore,
+        answers: userAnswers
+      };
+      localStorage.setItem('SMART_USS_EXAMS_DB_P1', JSON.stringify(submissions));
+
+      showNoticeModal(
+        'വിജയകരമായി സബ്മിറ്റ് ചെയ്തു!',
+        'നിങ്ങളുടെ പേപ്പർ 1 പരീക്ഷ വിജയകരമായി സബ്മിറ്റ് ചെയ്തിരിക്കുന്നു! റിസൾട്ട് അറിയാൻ "ഗെറ്റ് റിസൾട്ട്" ടാബിൽ പോയി റോൾ നമ്പർ നൽകുക.',
+        function() {
+          document.getElementById('omrMainForm').reset();
+          updateRollOmrBubbles('');
+          clearSignatureCanvas();
+          switchMainTab('resultTab');
+          document.getElementById('lookupRollInput').value = roll;
+        }
+      );
+    }
+
+    function fetchCandidateResult() {
+      var roll = document.getElementById('lookupRollInput').value.trim();
+      var outputArea = document.getElementById('resultOutputDisplay');
+      var submissions = JSON.parse(localStorage.getItem('SMART_USS_EXAMS_DB_P1') || '{}');
+
+      if (!roll) {
+        showNoticeModal('ശ്രദ്ധിക്കുക', 'ദയവായി റോൾ നമ്പർ നൽകുക');
+        return;
+      }
+
+      var record = submissions[roll];
+      if (!record) {
+        outputArea.innerHTML = '<div class="max-w-md mx-auto bg-red-50 border border-red-300 text-red-700 p-4 rounded-lg font-bold text-center text-sm font-malayalam">' +
+          'നൽകിയ റോൾ നമ്പറിൽ (' + roll + ') പേപ്പർ 1 പരീക്ഷാ വിവരങ്ങൾ ഒന്നും ലഭ്യമല്ല! ദയവായി റോൾ നമ്പർ പരിശോധിക്കുക.' +
+          '</div>';
+        return;
+      }
+
+      var resHtml = '<div class="max-w-2xl mx-auto bg-white border-2 border-emerald-600 rounded-lg p-4 md:p-6 shadow-md">' +
+        '<div class="flex justify-between items-center border-b border-emerald-200 pb-3 mb-4">' +
+        '<h3 class="text-emerald-800 font-extrabold text-lg font-malayalam">' +
+        'SMART VIDHYA USS MODEL EXAM RESULT (PAPER I)' +
+        '</h3>' +
+        '<button onclick="exportToPDF(\'resultOutputDisplay\', \'SMART_VIDHYA_Paper1_Result.pdf\')" class="no-print bg-[#0b3c68] hover:bg-slate-800 text-white font-bold px-4 py-2 rounded-lg text-xs md:text-sm font-malayalam flex items-center gap-1.5 transition-all shadow-sm">' +
+        '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H7a2 2 0 00-2 2v4h10z"></path></svg>' +
+        '🖨️ റിസൾട്ട് PDF ആയി സേവ് ചെയ്യുക' +
+        '</button>' +
+        '</div>' +
+        '<div class="space-y-1.5 text-sm text-slate-800 mb-4 font-malayalam bg-slate-50 p-3 rounded border border-slate-200">' +
+        '<p><strong>കുട്ടിയുടെ പേര്:</strong> ' + record.name + '</p>' +
+        '<p><strong>റോൾ നമ്പർ:</strong> ' + record.roll + '</p>' +
+        '<p><strong>മീഡിയം:</strong> ' + record.med + ' | <strong>1st Language:</strong> ' + record.lang + '</p>' +
+        '</div>' +
+        '<table class="w-full border-collapse border border-slate-300 text-sm font-malayalam mb-6">' +
+        '<thead><tr class="bg-slate-100 text-slate-800">' +
+        '<th class="border border-slate-300 p-2 text-left">വിഷയം / പാർട്ട്</th>' +
+        '<th class="border border-slate-300 p-2 text-center">ആകെ ചോദ്യങ്ങൾ</th>' +
+        '<th class="border border-slate-300 p-2 text-center">നേടിയ സ്കോർ</th>' +
+        '</tr></thead>' +
+        '<tbody>' +
+        '<tr><td class="border border-slate-300 p-2">Part-A (1st Language - ' + record.lang + ' AT)</td><td class="border border-slate-300 p-2 text-center">15</td><td class="border border-slate-300 p-2 text-center font-bold">' + record.partA + ' / 15</td></tr>' +
+        '<tr><td class="border border-slate-300 p-2">Part-B (Malayalam - BT)</td><td class="border border-slate-300 p-2 text-center">15</td><td class="border border-slate-300 p-2 text-center font-bold">' + record.partB + ' / 15</td></tr>' +
+        '<tr><td class="border border-slate-300 p-2">Part-C (Mathematics - ഗണിതം)</td><td class="border border-slate-300 p-2 text-center">20</td><td class="border border-slate-300 p-2 text-center font-bold">' + record.partC + ' / 20</td></tr>' +
+        '<tr class="bg-emerald-100 font-extrabold text-emerald-900"><td class="border border-slate-300 p-2">TOTAL SCORE (ആകെ സ്കോർ)</td><td class="border border-slate-300 p-2 text-center">50</td><td class="border border-slate-300 p-2 text-center text-base">' + record.total + ' / 50</td></tr>' +
+        '</tbody></table>';
+
+      // Detailed Response Comparison Sheet
+      var keyA = MASTER_EVALUATION_KEY_PAPER1[record.lang] || MASTER_EVALUATION_KEY_PAPER1['Malayalam'];
+      var keyB = MASTER_EVALUATION_KEY_PAPER1['Malayalam_BT'];
+      var keyC = MASTER_EVALUATION_KEY_PAPER1['Maths'];
+      var userAns = record.answers || {};
+
+      resHtml += '<div class="border-t-2 border-slate-300 pt-4 mt-4">' +
+        '<h4 class="font-extrabold text-[#0b3c68] text-base mb-3 font-malayalam text-center">കുട്ടി നൽകിയ ഉത്തരങ്ങളുടെ വിശദവിവരങ്ങൾ (RESPONSE SHEET)</h4>' +
+        '<div class="overflow-x-auto"><table class="w-full border-collapse border border-slate-300 text-xs font-malayalam">' +
+        '<thead><tr class="bg-[#0b3c68] text-white">' +
+        '<th class="border border-slate-300 p-2 text-center">ചോദ്യം</th>' +
+        '<th class="border border-slate-300 p-2 text-left">വിഭാഗം (Part)</th>' +
+        '<th class="border border-slate-300 p-2 text-center">നിങ്ങളുടെ ഉത്തരം</th>' +
+        '<th class="border border-slate-300 p-2 text-center">ശരിയായ ഉത്തരം</th>' +
+        '<th class="border border-slate-300 p-2 text-center">സ്റ്റാറ്റസ്</th>' +
+        '</tr></thead><tbody>';
+
+      for (var qNum = 1; qNum <= 50; qNum++) {
+        var correctOpt = '';
+        var partName = '';
+        if (qNum <= 15) {
+          correctOpt = keyA[qNum];
+          partName = 'Part-A (' + record.lang + ')';
+        } else if (qNum <= 30) {
+          correctOpt = keyB[qNum];
+          partName = 'Part-B (Malayalam BT)';
+        } else {
+          correctOpt = keyC[qNum];
+          partName = 'Part-C (Mathematics)';
+        }
+
+        var studentOpt = userAns[qNum] || '-';
+        var statusHtml = '';
+        var rowBg = '';
+
+        if (studentOpt === '-') {
+          statusHtml = '<span class="text-slate-500 font-bold">നൽകിയിട്ടില്ല</span>';
+          rowBg = 'bg-slate-50';
+        } else if (studentOpt === correctOpt) {
+          statusHtml = '<span class="text-emerald-700 font-extrabold">✔ ശരി</span>';
+          rowBg = 'bg-emerald-50/60';
+        } else {
+          statusHtml = '<span class="text-red-600 font-extrabold">✘ തെറ്റ്</span>';
+          rowBg = 'bg-red-50/60';
+        }
+
+        resHtml += '<tr class="' + rowBg + ' border-b border-slate-200">' +
+          '<td class="border border-slate-300 p-1.5 text-center font-bold">' + qNum + '</td>' +
+          '<td class="border border-slate-300 p-1.5 text-slate-700">' + partName + '</td>' +
+          '<td class="border border-slate-300 p-1.5 text-center font-extrabold">' + studentOpt + '</td>' +
+          '<td class="border border-slate-300 p-1.5 text-center font-extrabold text-emerald-800">' + correctOpt + '</td>' +
+          '<td class="border border-slate-300 p-1.5 text-center">' + statusHtml + '</td>' +
+          '</tr>';
+      }
+
+      resHtml += '</tbody></table></div>' +
+        '<div class="text-center mt-6 no-print">' +
+        '<button onclick="exportToPDF(\'resultOutputDisplay\', \'SMART_VIDHYA_Paper1_Exam_Result.pdf\')" class="bg-[#0b3c68] hover:bg-slate-800 text-white font-bold px-6 py-2.5 rounded-lg text-sm font-malayalam inline-flex items-center gap-2 transition-all shadow-md">' +
+        '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H7a2 2 0 00-2 2v4h10z"></path></svg>' +
+        '🖨️ ഈ റിസൾട്ട് കാർഡ് Save as PDF' +
+        '</button>' +
+        '</div></div></div>';
+
+      outputArea.innerHTML = resHtml;
+    }
+
+    function exportToPDF(elementId, filename) {
+      var element = document.getElementById(elementId);
+      if (!element) return;
+
+      var btn = event && event.currentTarget ? event.currentTarget : null;
+      var originalHtml = btn ? btn.innerHTML : '';
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '⏳ PDF തയ്യാറാകുന്നു...';
+      }
+
+      if (typeof html2pdf !== 'undefined') {
+        var opt = {
+          margin: [0.25, 0.25, 0.35, 0.25],
+          filename: filename || 'SMART_VIDHYA_USS_PAPER1.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { 
+            scale: 2, 
+            useCORS: true, 
+            logging: false,
+            scrollX: 0,
+            scrollY: 0,
+            windowWidth: document.documentElement.offsetWidth,
+            ignoreElements: function(el) {
+              return el.classList.contains('no-print');
+            }
+          },
+          jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+          pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+
+        html2pdf().set(opt).from(element).save().then(function() {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+          }
+        }).catch(function(err) {
+          console.error('PDF export fallback:', err);
+          window.print();
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+          }
+        });
+      } else {
+        window.print();
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = originalHtml;
+        }
+      }
+    }
+
+    window.onload = function() {
+      renderRollMatrixStructure();
+      renderOmrQuestionRows('omrPartAGrid', 1, 15);
+      renderOmrQuestionRows('omrPartBGrid', 16, 30);
+      renderOmrQuestionRows('omrPartCGrid', 31, 50);
+      resizeCanvas();
+
+      // Default medium and language selection
+      selectExamMedium('Malayalam');
+
+      if (canvas) {
+        canvas.addEventListener('mousedown', function() { isDrawing = true; });
+        canvas.addEventListener('mouseup', function() { isDrawing = false; if (ctx) ctx.beginPath(); });
+        canvas.addEventListener('mousemove', drawSignature);
+        canvas.addEventListener('touchstart', function(e) { isDrawing = true; e.preventDefault(); });
+        canvas.addEventListener('touchend', function() { isDrawing = false; if (ctx) ctx.beginPath(); });
+        canvas.addEventListener('touchmove', function(e) {
+          if (!isDrawing || !ctx) return;
+          var rect = canvas.getBoundingClientRect();
+          var touch = e.touches[0];
+          ctx.lineWidth = 2;
+          ctx.lineCap = 'round';
+          ctx.strokeStyle = '#000';
+          ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+          e.preventDefault();
+        });
+      }
+    };
+
+    window.onresize = resizeCanvas;
+  </script>
+</body>
+</html>
